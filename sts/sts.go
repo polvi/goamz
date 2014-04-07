@@ -14,18 +14,17 @@ import (
 
 // The STS type encapsulates operations operations with the STS endpoint.
 type STS struct {
-	aws.Auth
 	aws.Region
 	httpClient *http.Client
 }
 
 // New creates a new STS instance.
-func New(auth aws.Auth, region aws.Region) *STS {
-	return NewWithClient(auth, region, aws.RetryingClient)
+func New(region aws.Region) *STS {
+	return NewWithClient(region, aws.RetryingClient)
 }
 
-func NewWithClient(auth aws.Auth, region aws.Region, httpClient *http.Client) *STS {
-	return &STS{auth, region, httpClient}
+func NewWithClient(region aws.Region, httpClient *http.Client) *STS {
+	return &STS{region, httpClient}
 }
 
 func (sts *STS) query(params map[string]string, resp interface{}) error {
@@ -133,11 +132,15 @@ func (sts *STS) AssumeRoleWithWebIdentity(duration int, policy string, provider_
 	params := map[string]string{
 		"Action":           "AssumeRoleWithWebIdentity",
 		"DurationSeconds":  strconv.Itoa(duration),
-		"Policy":           policy,
-		"ProviderId":       provider_id,
 		"RoleArn":          role_arn,
 		"RoleSessionName":  role_session_name,
 		"WebIdentityToken": web_identity_token,
+	}
+	if policy != "" {
+		params["Policy"] = policy
+	}
+	if provider_id != "" {
+		params["ProviderId"] = provider_id
 	}
 	resp := new(AssumeRoleWithWebIdentityResp)
 	if err := sts.query(params, resp); err != nil {
