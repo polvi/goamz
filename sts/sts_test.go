@@ -1,9 +1,9 @@
 package sts_test
 
 import (
-	"github.com/mitchellh/goamz/aws"
-	"github.com/mitchellh/goamz/sts"
-	"github.com/mitchellh/goamz/testutil"
+	"github.com/polvi/goamz/aws"
+	"github.com/polvi/goamz/sts"
+	"github.com/polvi/goamz/testutil"
 	. "github.com/motain/gocheck"
 	"testing"
 )
